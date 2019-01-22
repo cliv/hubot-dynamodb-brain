@@ -16,7 +16,7 @@
     "aws-sdk": "^2.7.13"
   },
   "peerDependencies": {
-    "hubot": "2.x"
+    "hubot": "3.x"
   },
   "devDependencies": {
     "chai": "^2.1.1",

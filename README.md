@@ -45,6 +45,7 @@ user1>> hubot brainscan
 hubot>> My brain is doing great!
 ```
 
-## NPM Module
+## Local Testing
 
-https://www.npmjs.com/package/hubot-dynamodb-brain
+Run the following to Test Locally:
+  `docker-compose up --abort-on-container-exit`

@@ -3,6 +3,7 @@
 #
 # Configuration:
 # HUBOT_AWS_REGION - Default to us-east-2 if not set
+# HUBOT_DYNAMO_ENDPOINT - Endpoint to connect to for dynamodb
 # HUBOT_BRAIN_DYNAMO_TABLE - DynamoDB table, default hubotbrain
 # HUBOT_DYNAMO_NAME - Brain entry in table, default is our robot name
 # HUBOT_AWS_ACCESS_KEY_ID - AWS Credentials, default to instance IAM
@@ -26,6 +27,7 @@ module.exports = (robot) ->
   creds = {}
 
   config.region = process.env.HUBOT_AWS_REGION or 'us-east-2'
+  config.endpoint = process.env.HUBOT_DYNAMO_ENDPOINT or undefined
   params.TableName = process.env.HUBOT_BRAIN_DYNAMO_TABLE or 'hubotbrain'
   params.Key = { botname: process.env.HUBOT_BRAIN_DYNAMO_NAME or robot.name }
   creds.access = process.env.HUBOT_AWS_ACCESS_KEY_ID or undefined
@@ -70,5 +72,15 @@ module.exports = (robot) ->
     saveBrain data
 
   robot.respond /brainscan/, (res) ->
-    res.reply "My brain is called '#{params.Key.botname}' and it's doing great!"
+    # Create a random key, save it to dynamo, retrieve it and compare the result.
+    brainkey = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    robot.logger.info "hubot-dynamodb-brain: BRAINSCAN: Saving #{brainkey} to brainkey"
+    robot.brain.set 'brainkey', brainkey
+    keycheck = robot.brain.get('brainkey')
+    robot.logger.info "hubot-dynamodb-brain: BRAINSCAN: Retrieved #{keycheck} from brain"
+    if keycheck == brainkey
+      res.reply "My brain is called '#{params.Key.botname}' and it's doing great!"
+
+    else
+      res.reply "I forgot already! :("
 

@@ -1,0 +1,11 @@
+version: '2'
+services:
+  test-brain:
+    build: .
+    depends_on:
+      - dynamodb
+    environment:
+      HUBOT_DYNAMO_ENDPOINT: "http://dynamodb:8000"
+
+  dynamodb:
+    image: amazon/dynamodb-local
